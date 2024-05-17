@@ -2,6 +2,8 @@
 
 [![License: GPL v3](https://img.shields.io/github/license/pelican-installer/pelican-installer)](LICENSE.md)
 
+## :construction: This installer is currently being developed and does not work :construction:
+
 Welcome to the Pelican Installer repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican Panel on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, our troubleshooting section has some helpful tips.
 
 Read more about [Pelican](https://pelican.dev/) here. This script is not associated with the official Pelican Project.
