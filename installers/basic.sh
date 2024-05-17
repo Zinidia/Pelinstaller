@@ -561,11 +561,3 @@ output "Installing Pelican Wings.."
 wings_deps
 wings_dl
 wings_systemd
-
-# ----------------- Print Credentials ---------------- #
-print_brake 62
-output "Pelican Panel installed successfully!"
-output "Panel URL: http://$IP_ADDRESS"
-output "Username: admin"
-output "Password: $USER_PASSWORD"
-print_brake 62
