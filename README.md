@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/github/license/pelican-installer/pelican-installer)](LICENSE.md)
 
-## :construction: This installer is currently being developed and does not work :construction:
+## :construction: Pelican Panel is in beta so this script may not work if breaking changes are made, this script will also be recoded to use Docker Compose in the coming days :construction:
 
 Welcome to the Pelican Installer repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican Panel on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, our troubleshooting section has some helpful tips.
 
@@ -64,7 +64,7 @@ _\* Indicates an operating system and release that previously was supported by t
 
 The installation scripts can install and configure a firewall for you. The script will ask whether you want this or not. It is highly recommended to opt-in for the automatic firewall setup.
 
-## Development & Ops
+## Production & Ops
 
 ### Testing the script locally
 

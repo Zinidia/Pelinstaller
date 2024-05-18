@@ -40,11 +40,10 @@ fi
 # ------------------ Variables ----------------- #
 
 # Domain name / IP
-export IP_ADDRESS=""
+export IP_ADDRESS="$(hostname -I | awk '{print $1}')"
 
 # Initial admin account
-export user_username=""
-export user_password=""
+export USER_PASSWORD=$(head -c 100 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | fold -w 32 | head -n 1)
 
 # ------------ User input functions ------------ #
 

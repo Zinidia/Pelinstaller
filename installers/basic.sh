@@ -3,6 +3,14 @@
 # Pelican Installer
 # Copyright Matthew Jacob 2021-2024
 
+# Check if script is loaded, load if not or fail otherwise.
+fn_exists() { declare -F "$1" >/dev/null; }
+if ! fn_exists lib_loaded; then
+  # shellcheck source=lib/lib.sh
+  source /tmp/lib.sh || source <(curl -sSL "$GITHUB_BASE_URL/$GITHUB_SOURCE"/lib/lib.sh)
+  ! fn_exists lib_loaded && echo "* ERROR: Could not load lib script" && exit 1
+fi
+
 # ------------------ Variables ----------------- #
 # Path (export everything that is possible, doesn't matter that it exists already)
 export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
@@ -26,11 +34,11 @@ COLOR_RED='\033[0;31m'
 COLOR_NC='\033[0m'
 
 # Domain name / IP
-IP_ADDRESS="$(hostname -I | awk '{print $1}')"
+IP_ADDRESS="${FQDN:-localhost}"
 
 # Default User credentials
 MYSQL_PASSWORD=$(head -c 100 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9!"#%&()*+,-./:;<=>?@[\]^_`{|}~' | fold -w 32 | head -n 1)
-USER_PASSWORD=$(head -c 100 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | fold -w 32 | head -n 1)
+USER_PASSWORD="${USER_PASSWORD:-}"
 
 # Database host
 MYSQL_DBHOST_HOST="127.0.0.1"
@@ -235,9 +243,7 @@ configure_env() {
   # Fill in environment:setup automatically
   php artisan p:environment:setup \
     --telemetry=false \
-    --author="admin@example.com" \
     --url="$app_url" \
-    --timezone="America/Chicago" \
     --cache="redis" \
     --session="redis" \
     --queue="redis" \
@@ -263,8 +269,6 @@ configure_env() {
   php artisan p:user:make \
     --email="admin@example.com" \
     --username="admin" \
-    --name-first="Admin" \
-    --name-last="User" \
     --password="$USER_PASSWORD" \
     --admin=1
 

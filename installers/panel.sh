@@ -137,9 +137,7 @@ configure() {
 
   # Fill in environment:setup automatically
   php artisan p:environment:setup \
-    --author="$email" \
     --url="$app_url" \
-    --timezone="$timezone" \
     --cache="redis" \
     --session="redis" \
     --queue="redis" \
@@ -164,8 +162,6 @@ configure() {
   php artisan p:user:make \
     --email="$user_email" \
     --username="$user_username" \
-    --name-first="$user_firstname" \
-    --name-last="$user_lastname" \
     --password="$user_password" \
     --admin=1
 
