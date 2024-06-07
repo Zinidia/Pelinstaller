@@ -138,9 +138,9 @@ configure() {
   # Fill in environment:setup automatically
   php artisan p:environment:setup \
     --url="$app_url" \
-    --cache="redis" \
-    --session="redis" \
-    --queue="redis" \
+    --cache="file" \
+    --session="file" \
+    --queue="sync" \
     --redis-host="localhost" \
     --redis-pass="null" \
     --redis-port="6379" \

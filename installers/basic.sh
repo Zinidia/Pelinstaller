@@ -242,12 +242,11 @@ configure_env() {
 
   # Fill in environment:setup automatically
   php artisan p:environment:setup \
-    --telemetry=false \
     --url="$app_url" \
-    --cache="redis" \
-    --session="redis" \
-    --queue="redis" \
-    --redis-host="127.0.0.1" \
+    --cache="file" \
+    --session="file" \
+    --queue="sync" \
+    --redis-host="localhost" \
     --redis-pass="null" \
     --redis-port="6379" \
     --settings-ui=true
