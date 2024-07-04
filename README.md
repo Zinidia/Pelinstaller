@@ -108,7 +108,7 @@ In `install.sh` github source and script release variables should change every r
 
 ## Sponsors ✨
 
-I would like to extend my sincere thanks to the following sponsors for helping fund Pelican Installer's development.
+I would like to extend my sincere thanks to the following sponsors for helping fund Pelinstaller's development.
 [Interested in becoming a sponsor?](mailto:me@matthew.expert)
 
 | Company                                                   | About                                                                                                                                                                                                                                           |
