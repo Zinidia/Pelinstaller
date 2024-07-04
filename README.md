@@ -1,12 +1,16 @@
-# Pelican Installer
+# Pelinstaller
 
-[![License: GPL v3](https://img.shields.io/github/license/pelican-installer/pelican-installer)](LICENSE.md)
+[![License: GPL v3](https://img.shields.io/github/license/Zinidia/Pelinstaller)](LICENSE.md)
 
-## :construction: Pelican Panel is in beta so this script may not work if breaking changes are made, this script will also be recoded to use Docker Compose in the coming days :construction:
+<table><tr></tr><tr><td>
 
-Welcome to the Pelican Installer repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican Panel on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, our troubleshooting section has some helpful tips.
+### ⚠️ Pelican is in beta so this script may not work if breaking changes are made, this script will also be recoded to use Docker Compose in the coming days :construction:
 
-Read more about [Pelican](https://pelican.dev/) here. This script is not associated with the official Pelican Project.
+Welcome to the Pelinstaller repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, our troubleshooting section has some helpful tips.
+
+Learn more about [Pelican's Project](https://pelican.dev/) here. This script is a third-party utility and not associated with the official Pelican Project.
+
+<br></td></tr></table>
 
 ## Using the installation scripts
 
