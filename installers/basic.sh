@@ -242,14 +242,7 @@ configure_env() {
 
   # Fill in environment:setup automatically
   php artisan p:environment:setup \
-    --url="$app_url" \
-    --cache="file" \
-    --session="file" \
-    --queue="sync" \
-    --redis-host="localhost" \
-    --redis-pass="null" \
-    --redis-port="6379" \
-    --settings-ui=true
+    --url="$app_url"
 
   # Configure database and backup credentials
   php artisan p:environment:database \
