@@ -6,7 +6,7 @@
 
 ### ⚠️ Pelican is in beta so this script may not work if breaking changes are made, this script will also be recoded to use Docker Compose in the coming days :construction:
 
-Welcome to the Pelinstaller repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, our troubleshooting section has some helpful tips.
+Welcome to the Pelinstaller repository! This installer is a hard fork of [ForestRacks's Pterodactyl Installer](https://github.com/ForestRacks/PteroInstaller) and is specifically designed for people to easily install and set up the Pelican on Debian-based or RHEL-based machines. If you encounter any issues during the installation process, post an issue on our GitHub repository for assistance.
 
 Learn more about [Pelican's Project](https://pelican.dev/) here. This script is a third-party utility and not associated with the official Pelican Project.
 
@@ -69,37 +69,6 @@ _\* Indicates an operating system and release that previously was supported by t
 The installation scripts can install and configure a firewall for you. The script will ask whether you want this or not. It is highly recommended to opt-in for the automatic firewall setup.
 
 ## Production & Ops
-
-### Testing the script locally
-
-To test the script, we use [Vagrant](https://www.vagrantup.com). With Vagrant, you can quickly get a fresh machine up and running to test the script.
-
-If you want to test the script on all supported installations in one go, just run the following.
-
-```bash
-vagrant up
-```
-
-If you only want to test a specific distribution, you can run the following.
-
-```bash
-vagrant up <name>
-```
-
-Replace name with one of the following (supported installations).
-
-- `ubuntu_noble`
-- `ubuntu_jammy`
-- `ubuntu_focal`
-- `debian_bullseye`
-- `debian_buster`
-- `debian_bookworm`
-- `almalinux_8`
-- `almalinux_9`
-- `rockylinux_8`
-- `rockylinux_9`
-
-Then you can use `vagrant ssh <name of machine>` to SSH into the box. The project directory will be mounted in `/vagrant` so you can quickly modify the script locally and then test the changes by running the script from `/vagrant/installers/panel.sh` and `/vagrant/installers/wings.sh` respectively.
 
 ### Creating a release
 
