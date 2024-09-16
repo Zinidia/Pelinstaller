@@ -161,15 +161,15 @@ configure() {
   success "Configured environment!"
 }
 
-# set the correct folder permissions depending on OS and webserver
+# Set proper directory permissions for distro
 set_folder_permissions() {
-  # if os is ubuntu or debian, we do this
+  # if os is ubuntu or debian, set permissions
   case "$OS" in
-  debian | ubuntu)
-    chown -R www-data:www-data ./*
+  ubuntu | debian)
+    chown -R www-data:www-data /var/www/pelican/*
     ;;
   rocky | almalinux)
-    chown -R nginx:nginx ./*
+    chown -R nginx:nginx /var/www/pelican/*
     ;;
   esac
 }
@@ -191,7 +191,7 @@ install_pteroq() {
   curl -o /etc/systemd/system/pteroq.service "$GITHUB_URL"/configs/pteroq.service
 
   case "$OS" in
-  debian | ubuntu)
+  ubuntu | debian)
     sed -i -e "s@<user>@www-data@g" /etc/systemd/system/pteroq.service
     ;;
   rocky | almalinux)
@@ -411,12 +411,11 @@ perform_install() {
   create_db_user "$MYSQL_USER" "$MYSQL_PASSWORD"
   create_db "$MYSQL_DB" "$MYSQL_USER"
   configure
-  set_folder_permissions
   insert_cronjob
   install_pteroq
   configure_nginx
   [ "$CONFIGURE_LETSENCRYPT" == true ] && letsencrypt
-
+  set_folder_permissions
   return 0
 }
 

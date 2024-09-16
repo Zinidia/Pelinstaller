@@ -79,7 +79,7 @@ rm_services() {
   systemctl disable --now pteroq
   rm -rf /etc/systemd/system/pteroq.service
   case "$OS" in
-  debian | ubuntu)
+  ubuntu | debian)
     systemctl disable --now redis-server
     ;;
   centos)

@@ -297,13 +297,13 @@ configure_env() {
 
 # Set proper directory permissions for distro
 set_folder_permissions() {
-  # Assign directory user
+  # if os is ubuntu or debian, set permissions
   case "$OS" in
-  debian | ubuntu)
-    chown -R www-data:www-data ./*
+  ubuntu | debian)
+    chown -R www-data:www-data /var/www/pelican/*
     ;;
   rocky | almalinux)
-    chown -R nginx:nginx ./*
+    chown -R nginx:nginx /var/www/pelican/*
     ;;
   esac
 }
@@ -325,7 +325,7 @@ pteroq_systemd() {
   curl -o /etc/systemd/system/pteroq.service "$GIT_REPO_URL"/configs/pteroq.service
 
   case "$OS" in
-  debian | ubuntu)
+  ubuntu | debian)
     sed -i -e "s@<user>@www-data@g" /etc/systemd/system/pteroq.service
     ;;
   rocky | almalinux)
@@ -547,7 +547,6 @@ install_composer_deps
 create_db_user "pelican" "$MYSQL_PASSWORD"
 create_db "panel" "pelican"
 configure_env
-set_folder_permissions
 insert_cronjob
 pteroq_systemd
 configure_nginx
@@ -557,3 +556,4 @@ output "Installing Pelican Wings.."
 wings_deps
 wings_dl
 wings_systemd
+set_folder_permissions
