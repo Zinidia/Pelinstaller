@@ -191,7 +191,7 @@ install_composer() {
 
 panel_dl() {
   output "Downloading pelican panel files .. "
-  mkdir -p /var/www/pelican
+  mkdir -p /var/www/pelican/storage/framework/cache/data/{9c,9c/a8,8a,8a/69}
   cd /var/www/pelican || exit
 
   curl -Lo panel.tar.gz "$PANEL_DL_URL"
@@ -300,10 +300,10 @@ set_folder_permissions() {
   # if os is ubuntu or debian, set permissions
   case "$OS" in
   ubuntu | debian)
-    chown -R www-data:www-data /var/www/pelican/*
+    chown -R www-data:www-data ./*
     ;;
   rocky | almalinux)
-    chown -R nginx:nginx /var/www/pelican/*
+    chown -R nginx:nginx ./*
     ;;
   esac
 }
