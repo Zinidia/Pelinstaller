@@ -300,10 +300,10 @@ set_folder_permissions() {
   # if os is ubuntu or debian, set permissions
   case "$OS" in
   ubuntu | debian)
-    chown -R www-data:www-data ./*
+    chown -R www-data:www-data ./
     ;;
   rocky | almalinux)
-    chown -R nginx:nginx ./*
+    chown -R nginx:nginx ./
     ;;
   esac
 }
