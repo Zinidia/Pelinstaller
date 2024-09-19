@@ -22,6 +22,8 @@ bash <(curl -Ss https://raw.githubusercontent.com/Zinidia/Pelinstaller/Productio
 
 _Note: On some systems, it's required to be already logged in as root before executing the one-line command (where `sudo` is in front of the command does not work)._
 
+⚠️ Warning: There is currently an issue where Pelican creates files owned by the wrong Linux user when specific features on the admin panel are enabled. To resolve this, you may have to adjust the permissions by running the following command: `chown -R www-data:www-data /var/www/pelican`. For more details, check Pelican's [troubleshooting guide](https://pelican.dev/docs/troubleshooting/).
+
 Here is a [YouTube Video](https://www.youtube.com/watch?v=E8UJhyUFoHM) that illustrates the installation process.
 
 ## Features

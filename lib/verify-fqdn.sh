@@ -75,8 +75,9 @@ dep_install() {
 confirm() {
   output "This script will perform a HTTPS request to the endpoint $CHECKIP_URL"
   output "The official IP check service for this script, https://ip.forestracks.net"
-  output "- we will store request logs for several days for DDoS Mitigation reasons."
-  output "- Requests will also be logged by Cloudflare and other bandwidth providers."
+  output "- The reason is to check if your domain properly points to this machine."
+  output "- We will store request logs for several days for DDoS Mitigation reasons."
+  output "- Requests may also be logged by Cloudflare and other transit providers."
   output "If you would like to use another service, feel free to modify the script."
 
   echo -e -n "* I agree that this HTTPS request is performed (y/N): "
