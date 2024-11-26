@@ -136,8 +136,8 @@ configure() {
   php artisan key:generate --force
 
   # Fill in environment:setup automatically
-  php artisan p:environment:setup \
-    --url="$app_url"
+  php artisan p:environment:setup
+  sed -i "s|^APP_URL=.*|APP_URL=${app_url}|" .env
 
   # Fill in environment:database credentials automatically
   php artisan p:environment:database \

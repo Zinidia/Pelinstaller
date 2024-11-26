@@ -241,8 +241,8 @@ configure_env() {
   done
 
   # Fill in environment:setup automatically
-  php artisan p:environment:setup \
-    --url="$app_url"
+  php artisan p:environment:setup
+  sed -i "s|^APP_URL=.*|APP_URL=${app_url}|" .env
 
   # Configure database and backup credentials
   php artisan p:environment:database \
