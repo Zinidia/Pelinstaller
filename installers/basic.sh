@@ -413,7 +413,7 @@ panel_deps() {
     update_repos
 
     # Install dependencies
-    install_packages "php8.3 php8.3-{cli,common,gd,intl,mysql,mbstring,bcmath,xml,fpm,curl,zip} \
+    install_packages "php8.3 php8.3-{cli,common,gd,intl,sqlite3,mysql,mbstring,bcmath,xml,fpm,curl,zip} \
       mariadb-common mariadb-server mariadb-client \
       nginx \
       redis-server \
