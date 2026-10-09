@@ -61,7 +61,7 @@ done
 
 export REPO BRANCH
 export GIT_REPO_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-LOG_PATH="/var/log/pelinstaller.log"
+LOG_PATH="/tmp/pelinstaller.log"
 
 # Exit with error status code if user is not root
 if [[ $EUID -ne 0 ]]; then
