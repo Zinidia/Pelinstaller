@@ -229,8 +229,8 @@ enable_services() {
     systemctl start redis-server
     ;;
   almalinux | rocky)
-    systemctl enable redis
-    systemctl start redis
+    systemctl enable "$REDIS_PACKAGE"
+    systemctl start "$REDIS_PACKAGE"
     ;;
   esac
   systemctl enable nginx
@@ -281,7 +281,10 @@ alma_rocky_dep() {
     setroubleshoot-server setools setools-console mcstrans"
 
   # Add remi repo
-  install_packages "epel-release http://rpms.remirepo.net/enterprise/remi-release-$OS_VER_MAJOR.rpm"
+  install_packages "epel-release dnf-plugins-core https://rpms.remirepo.net/enterprise/remi-release-$OS_VER_MAJOR.rpm"
+  if [ "$OS_VER_MAJOR" -ge 9 ]; then
+    dnf config-manager --set-enabled crb
+  fi
   dnf module enable -y php:remi-8.5
 }
 
@@ -318,7 +321,7 @@ dep_install() {
     install_packages "php php-{common,fpm,cli,json,intl,mysqlnd,mcrypt,gd,mbstring,pdo,zip,bcmath,dom,opcache,posix} \
       mariadb mariadb-server \
       nginx \
-      redis \
+      $REDIS_PACKAGE \
       zip unzip tar \
       git cronie"
 

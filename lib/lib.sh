@@ -533,6 +533,11 @@ debian)
 almalinux | rocky)
   [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
   [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
+  export REDIS_PACKAGE=redis
+  if [ "$OS_VER_MAJOR" == "10" ]; then
+    SUPPORTED=true
+    REDIS_PACKAGE=valkey
+  fi
   ;;
 *)
   SUPPORTED=false

@@ -63,6 +63,9 @@ collect_input() {
 
 # ------------------ Docker engine ------------------ #
 install_docker() {
+  if [[ "$OS" =~ ^(rocky|almalinux)$ && "$OS_VER_MAJOR" == 10 ]] && ! modprobe xt_addrtype 2>/dev/null; then
+    install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
+  fi
   if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     success "Docker already installed"
     return

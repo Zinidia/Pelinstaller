@@ -140,6 +140,9 @@ dep_install() {
     [ "$CONFIGURE_LETSENCRYPT" == true ] && install_packages "epel-release"
 
     install_packages "device-mapper-persistent-data lvm2"
+    if [ "$OS_VER_MAJOR" == "10" ] && ! modprobe xt_addrtype 2>/dev/null; then
+      install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
+    fi
     ;;
   esac
 

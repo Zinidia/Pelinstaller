@@ -87,7 +87,7 @@ rm_services() {
     systemctl disable --now redis-server || true
     ;;
   almalinux | rocky)
-    systemctl disable --now redis || true
+    systemctl disable --now "$REDIS_PACKAGE" || true
     systemctl disable --now php-fpm || true
     rm -rf /etc/php-fpm.d/www-pelican.conf
     ;;

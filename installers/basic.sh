@@ -321,8 +321,8 @@ enable_services() {
     systemctl start redis-server
     ;;
   almalinux | rocky)
-    systemctl enable redis
-    systemctl start redis
+    systemctl enable "$REDIS_PACKAGE"
+    systemctl start "$REDIS_PACKAGE"
     ;;
   esac
   systemctl enable nginx
@@ -373,7 +373,10 @@ alma_rocky_dep() {
     setroubleshoot-server setools setools-console mcstrans jq"
 
   # Add remi repo
-  install_packages "epel-release http://rpms.remirepo.net/enterprise/remi-release-$OS_VER_MAJOR.rpm"
+  install_packages "epel-release dnf-plugins-core https://rpms.remirepo.net/enterprise/remi-release-$OS_VER_MAJOR.rpm"
+  if [ "$OS_VER_MAJOR" -ge 9 ]; then
+    dnf config-manager --set-enabled crb
+  fi
   dnf module enable -y php:remi-8.5
 }
 
@@ -406,7 +409,7 @@ panel_deps() {
     install_packages "php php-{common,fpm,cli,json,intl,mysqlnd,mcrypt,gd,mbstring,pdo,zip,bcmath,dom,opcache,posix} \
       mariadb mariadb-server \
       nginx \
-      redis \
+      $REDIS_PACKAGE \
       zip unzip tar \
       git cronie"
 
@@ -477,6 +480,9 @@ wings_deps() {
     dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 
     install_packages "device-mapper-persistent-data lvm2"
+    if [ "$OS_VER_MAJOR" == "10" ] && ! modprobe xt_addrtype 2>/dev/null; then
+      install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
+    fi
     ;;
   esac
 
