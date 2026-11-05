@@ -97,7 +97,9 @@ rm_services() {
 
 rm_cron() {
   output "Removing cron jobs .."
-  crontab -l | grep -vF "* * * * * php /var/www/pelican/artisan schedule:run >> /dev/null 2>&1" | crontab -
+  local web_user=www-data
+  [[ "$OS" =~ ^(rocky|almalinux)$ ]] && web_user=nginx
+  (crontab -u "$web_user" -l 2>/dev/null || true) | grep -vF "/var/www/pelican/artisan schedule:run" | crontab -u "$web_user" -
   success "Removed cron jobs."
 }
 

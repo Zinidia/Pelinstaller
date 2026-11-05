@@ -140,9 +140,6 @@ dep_install() {
     [ "$CONFIGURE_LETSENCRYPT" == true ] && install_packages "epel-release"
 
     install_packages "device-mapper-persistent-data lvm2"
-    if [ "$OS_VER_MAJOR" == "10" ] && ! modprobe xt_addrtype 2>/dev/null; then
-      install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
-    fi
     ;;
   esac
 
@@ -165,7 +162,7 @@ ptdl_dl() {
   echo "* Downloading Pelican Wings.. "
 
   mkdir -p /etc/pelican /var/run/wings
-  curl -fsSL -o /usr/local/bin/wings "$WINGS_DL_URL$ARCH"
+  curl -fsSL --retry 5 --retry-all-errors --speed-limit 1024 --speed-time 30 -o /usr/local/bin/wings "$WINGS_DL_URL$ARCH"
 
   chmod u+x /usr/local/bin/wings
 
@@ -265,6 +262,7 @@ main() {
   welcome "wings"
 
   check_virt
+  install_docker_kernel_modules
 
   echo "* "
   echo "* The installer will install Docker, required dependencies for Wings"
@@ -335,7 +333,6 @@ main() {
 
     # TLS Cert
     CONFIGURE_LETSENCRYPT="${CONFIGURE_LETSENCRYPT:-false}"
-    HOSTNAME="${FQDN:-}"
     EMAIL="${EMAIL:-}"
 
     # Database

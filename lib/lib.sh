@@ -162,13 +162,6 @@ run_installer() {
   bash <(curl -fsSL "$GIT_REPO_URL/installers/$1.sh")
 }
 
-array_contains_element() {
-  local e match="$1"
-  shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
-  return 1
-}
-
 valid_email() {
   [[ $1 =~ ${email_regex} ]]
 }
@@ -195,7 +188,7 @@ create_db_user() {
 
   output "Creating database user $db_user_name .."
 
-  mariadb -u root -e "CREATE USER '$db_user_name'@'$db_host' IDENTIFIED BY '$db_user_password';"
+  mariadb -u root -e "CREATE OR REPLACE USER '$db_user_name'@'$db_host' IDENTIFIED BY '$db_user_password';"
   mariadb -u root -e "FLUSH PRIVILEGES;"
 
   output "Database user $db_user_name created"
@@ -262,6 +255,18 @@ install_packages() {
     eval dnf -y $args install "$1"
     ;;
   esac
+}
+
+install_docker_kernel_modules() {
+  [[ "$OS" =~ ^(rocky|almalinux)$ && "$OS_VER_MAJOR" == "10" ]] || return 0
+  modprobe xt_addrtype 2>/dev/null && return 0
+  if dnf -q list --available "kernel-modules-extra-$(uname -r)" >/dev/null 2>&1; then
+    install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
+    modprobe xt_addrtype && return 0
+  fi
+  install_packages "kernel kernel-modules kernel-modules-extra"
+  error "Docker needs the xt_addrtype kernel module, which is unavailable for the running kernel $(uname -r). A newer kernel was installed: reboot and run the installer again."
+  exit 1
 }
 
 # ------------ User input functions ------------ #
@@ -533,11 +538,9 @@ debian)
 almalinux | rocky)
   [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
   [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
+  [ "$OS_VER_MAJOR" == "10" ] && SUPPORTED=true
   export REDIS_PACKAGE=redis
-  if [ "$OS_VER_MAJOR" == "10" ]; then
-    SUPPORTED=true
-    REDIS_PACKAGE=valkey
-  fi
+  [ "$OS_VER_MAJOR" == "10" ] && REDIS_PACKAGE=valkey
   ;;
 *)
   SUPPORTED=false

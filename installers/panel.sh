@@ -47,7 +47,6 @@ export MYSQL_USER=""
 export MYSQL_PASSWORD=""
 
 # Environment
-export timezone=""
 export email=""
 
 # Initial admin account
@@ -111,7 +110,7 @@ ptdl_dl() {
   mkdir -p /var/www/pelican/storage/framework/cache/data/{9c,9c/a8,8a,8a/69}
   cd /var/www/pelican || exit
 
-  curl -Lo panel.tar.gz "$PANEL_DL_URL"
+  curl -fL --retry 5 --retry-all-errors --speed-limit 1024 --speed-time 30 -o panel.tar.gz "$PANEL_DL_URL"
   tar -xzvf panel.tar.gz
   chmod -R 755 storage/* bootstrap/cache/
 
@@ -123,7 +122,12 @@ ptdl_dl() {
 install_composer_deps() {
   output "Installing composer dependencies .."
   [ "$OS" == "rocky" ] || [ "$OS" == "almalinux" ] && export PATH=/usr/local/bin:$PATH
-  COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
+  local attempt
+  for attempt in 1 2 3; do
+    COMPOSER_ALLOW_SUPERUSER=1 timeout 600 composer install --no-dev --optimize-autoloader && break
+    [ "$attempt" == 3 ] && error "composer install failed" && exit 1
+    warning "composer install failed or stalled, retrying .."
+  done
   success "Installed composer dependencies!"
 }
 
@@ -139,8 +143,7 @@ configure() {
   php artisan key:generate --force
 
   # Fill in environment:setup automatically
-  php artisan p:environment:setup
-  sed -i "s|^APP_URL=.*|APP_URL=${app_url}|" .env
+  php artisan p:environment:setup -n --url="$app_url"
   sed -i "s|^APP_INSTALLED=false|APP_INSTALLED=true|" .env
 
   # Fill in environment:database credentials automatically
@@ -248,7 +251,7 @@ php_fpm_conf() {
   curl -o /etc/php-fpm.d/www-pelican.conf "$GIT_REPO_URL"/configs/www-pelican.conf
 
   systemctl enable php-fpm
-  systemctl start php-fpm
+  systemctl restart php-fpm
 }
 
 ubuntu_dep() {
@@ -466,17 +469,6 @@ main() {
   MYSQL_USER="pelican"
   MYSQL_PASSWORD="$(gen_passwd 64)"
 
-  readarray -t valid_timezones <<<"$(curl -s "$GIT_REPO_URL"/configs/valid_timezones.txt)"
-  output "List of valid timezones here $(hyperlink "https://www.php.net/manual/en/timezones.php")"
-
-  while [ -z "$timezone" ]; do
-    echo -n "* Select timezone [UTC]: "
-    read -r timezone_input
-
-    array_contains_element "$timezone_input" "${valid_timezones[@]}" && timezone="$timezone_input"
-    [ -z "$timezone_input" ] && timezone="UTC"
-  done
-
   email_input email "Provide the email address that will be used to configure Let's Encrypt and Pelican: " "Email cannot be empty or invalid"
 
   # Initial admin account
@@ -530,7 +522,6 @@ summary() {
   output "Database name: $MYSQL_DB"
   output "Database user: $MYSQL_USER"
   output "Database password: (censored)"
-  output "Timezone: $timezone"
   output "Email: $email"
   output "User email: $user_email"
   output "Username: $user_username"

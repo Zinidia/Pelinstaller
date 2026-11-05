@@ -49,7 +49,7 @@ create_db_user() {
 
   output "Creating database user $db_user_name .."
 
-  mariadb -u root -e "CREATE USER '$db_user_name'@'$db_host' IDENTIFIED BY '$db_user_password';"
+  mariadb -u root -e "CREATE OR REPLACE USER '$db_user_name'@'$db_host' IDENTIFIED BY '$db_user_password';"
   mariadb -u root -e "FLUSH PRIVILEGES;"
 
   output "Database user $db_user_name created"
@@ -181,7 +181,7 @@ panel_dl() {
   mkdir -p /var/www/pelican/storage/framework/cache/data/{9c,9c/a8,8a,8a/69}
   cd /var/www/pelican || exit
 
-  curl -fLo panel.tar.gz "$PANEL_DL_URL"
+  curl -fL --retry 5 --retry-all-errors --speed-limit 1024 --speed-time 30 -o panel.tar.gz "$PANEL_DL_URL"
   tar -xzvf panel.tar.gz
   chmod -R 755 storage/* bootstrap/cache/
 
@@ -193,7 +193,12 @@ panel_dl() {
 install_composer_deps() {
   output "Installing composer dependencies .."
   [ "$OS" == "rocky" ] || [ "$OS" == "almalinux" ] && export PATH=/usr/local/bin:$PATH
-  COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
+  local attempt
+  for attempt in 1 2 3; do
+    COMPOSER_ALLOW_SUPERUSER=1 timeout 600 composer install --no-dev --optimize-autoloader && break
+    [ "$attempt" == 3 ] && error "composer install failed" && exit 1
+    warning "composer install failed or stalled, retrying .."
+  done
   success "Installed composer dependencies!"
 }
 
@@ -230,8 +235,7 @@ configure_env() {
   done
 
   # Fill in environment:setup automatically
-  php artisan p:environment:setup -n
-  sed -i "s|^APP_URL=.*|APP_URL=${app_url}|" .env
+  php artisan p:environment:setup -n --url="$app_url"
   sed -i "s|^APP_INSTALLED=false|APP_INSTALLED=true|" .env
 
   # Configure database and backup credentials
@@ -253,6 +257,31 @@ configure_env() {
     --username="admin" \
     --password="$USER_PASSWORD" \
     --admin=1
+
+  # Create a node
+  php artisan p:node:make -n \
+    --name="Node01" \
+    --description="First Node" \
+    --fqdn="$HOSTNAME" \
+    --public=1 \
+    --scheme="http" \
+    --proxy=0 \
+    --maintenance=0 \
+    --maxMemory="$(free -m | awk 'FNR == 2 {print $2}')" \
+    --overallocateMemory=0 \
+    --maxDisk="$(df --total -m | tail -n 1 | awk '{print $2}')" \
+    --overallocateDisk=0 \
+    --maxCpu=0 \
+    --overallocateCpu=0 \
+    --uploadSize=10240 \
+    --daemonListeningPort=8080 \
+    --daemonConnectingPort=8080 \
+    --daemonSFTPPort=2022 \
+    --daemonBase="/var/lib/pelican/volumes"
+
+  # Fetch wings configuration
+  mkdir -p /etc/pelican
+  php artisan p:node:configuration 1 >/etc/pelican/config.yml
 
   success "Configured environment!"
 }
@@ -340,7 +369,7 @@ php_fpm_conf() {
   curl -f -o /etc/php-fpm.d/www-pelican.conf "$GIT_REPO_URL"/configs/www-pelican.conf
 
   systemctl enable php-fpm
-  systemctl start php-fpm
+  systemctl restart php-fpm
 }
 
 ubuntu_dep() {
@@ -480,9 +509,6 @@ wings_deps() {
     dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
 
     install_packages "device-mapper-persistent-data lvm2"
-    if [ "$OS_VER_MAJOR" == "10" ] && ! modprobe xt_addrtype 2>/dev/null; then
-      install_packages "kernel-modules-$(uname -r) kernel-modules-extra-$(uname -r)"
-    fi
     ;;
   esac
 
@@ -502,7 +528,7 @@ wings_dl() {
   echo "* Downloading Pelican Wings.. "
 
   mkdir -p /etc/pelican /var/run/wings
-  curl -fsSL -o /usr/local/bin/wings "$WINGS_DL_URL$ARCH"
+  curl -fsSL --retry 5 --retry-all-errors --speed-limit 1024 --speed-time 30 -o /usr/local/bin/wings "$WINGS_DL_URL$ARCH"
 
   chmod u+x /usr/local/bin/wings
 
@@ -547,6 +573,7 @@ main() {
 
   welcome "basic"
   check_os_x86_64
+  install_docker_kernel_modules
 
   # --------------- Execute functions --------------- #
   output "Starting Pelican Panel installation.. this might take a while!"
